@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Books</title>
+
+    <link href="webjars/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container">
+<div class="row">
+    <div class="col">
+        <form method="post" action="/logout" class="float-right">
+            <input type="submit" value="Logout" class="btn  btn-primary"/>
+        </form>
+    </div>
+</div>
+<h1>List of books:</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Author</th>
+        <th sec:authorize="hasRole('ROLE_ADMIN')"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="book : ${books}">
+        <tr>
+            <td th:text="${book.id}"></td>
+            <td th:text="${book.name}"></td>
+            <td th:text="${book.author}"></td>
+            <td sec:authorize="hasRole('ROLE_ADMIN')">
+                <form th:method="delete"
+                      th:action="@{'/books/' + ${book.id}}">
+                    <input type="submit" value="Delete" class="btn  btn-primary"/>
+                </form>
+            </td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
+
+<div sec:authorize="hasRole('ROLE_ADMIN')">
+    <form method="POST" enctype="multipart/form-data" action="/books">
+        <div class="form-group">
+            <label for="file">File to upload:</label>
+            <input type="file" name="file" class="btn form-control-file" id="file"/>
+        </div>
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <p th:text="${error}"></p>
+        </div>
+        <input type="submit" value="Upload" class="btn btn-primary"/>
+    </form>
+
+</div>
+
+</body>
+</html>
